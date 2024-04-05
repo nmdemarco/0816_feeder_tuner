@@ -96,19 +96,28 @@ class Feeder:
 
 def open_serial_port(port_name):
     global serial_port
-    """Open the selected COM port with the state's comm_properties values."""
-
+    """Open the selected COM port."""
+    
     try:
         serial_port = serial.Serial(port=port_name,
-                                            baudrate=9600,
-                                            bytesize=8,
-                                            parity=serial.PARITY_NONE,
-                                            stopbits=serial.STOPBITS_ONE,
-                                            timeout=1)
-        print(f"COM port {port_name} opened successfully.")
+                                    baudrate=19200,
+                                    bytesize=8,
+                                    parity=serial.PARITY_NONE,
+                                    stopbits=serial.STOPBITS_ONE,
+                                    timeout=1)
+        
+        if serial_port.is_open:
+            print(f"COM port {port_name} opened successfully.")
+            # Now that the port is confirmed open, send initial commands.
+            send_command("G21", handle_ok_response)  # Example commands
+            send_command("G90", handle_ok_response)
+            send_command("M610 S1", handle_ok_response)
+            send_command("M611 S0", handle_ok_response)
+        else:
+            print(f"Failed to open COM port {port_name}.")
     except serial.SerialException as e:
         print(f"Failed to open COM port {port_name}: {e}")
-
+        
 def close_serial_port():
     global serial_port
     """Close the open serial port."""
@@ -125,10 +134,12 @@ def send_command(command, response_callback):
 
     try:
         serial_port.write(command.encode('utf-8'))
+        print(f"writing to serial: {command}")
         # Wait for the response
         time.sleep(0.5)
         response = serial_port.readline().decode('utf-8').strip()
         if response:
+            print("got response")
             response_callback(response)
         else:
             print("No response received before timeout.")
@@ -165,14 +176,10 @@ def check_feeder():
     else:
         print("Feeder reports an error.")
 
-def enable_disable_feeders(enable=True):
+def enable_disable_feeders():
     """Enable or disable all feeders."""
-    if not _feeder_enabled:
-        send_command("M611 S1", handle_ok_response)
-        _feeder_enabled = enable
-    else:
-        send_command("M611 S0", handle_ok_response)
-    print("Feeders enabled." if enable else "Feeders disabled.")
+    send_command("M611 S1", handle_ok_response)
+    print("Enabled all feeders")
     
 def select_feeder_address():
     """Select a feeder address."""
@@ -312,7 +319,7 @@ def main_menu():
         if choice == "1":
             select_feeder_address()
         elif choice == "2":
-            pass
+            enable_disable_feeders()
         elif choice == "4":
             jog_windows()
         elif choice == "6":
