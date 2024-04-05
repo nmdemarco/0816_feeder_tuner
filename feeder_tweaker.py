@@ -22,8 +22,10 @@ class Feeder:
         A	advanced angle, defaults to FEEDER_DEFAULT_FULL_ADVANCED_ANGLE
         B	half advanced angle, defaults to FEEDER_DEFAULT_HALF_ADVANCED_ANGLE
         C	retract angle, defaults to FEEDER_DEFAULT_RETRACT_ANGLE
-        F	standard feed length, defaults to FEEDER_DEFAULT_FEED_LENGTH, which is FEEDER_MECHANICAL_ADVANCE_LENGTH, which is 4mm usually
-        U	settle time to go from advanced angle to retract angle and reverse, defaults to FEEDER_DEFAULT_TIME_TO_SETTLE. make sure the servo is fast enough to reach the angles within given settle time
+        F	standard feed length, defaults to FEEDER_DEFAULT_FEED_LENGTH, which is FEEDER_MECHANICAL_ADVANCE_LENGTH,
+            which is 4mm usually
+        U	settle time to go from advanced angle to retract angle and reverse, defaults to FEEDER_DEFAULT_TIME_TO_SETTLE.
+            make sure the servo is fast enough to reach the angles within given settle time
         V	pulsewidth at which servo is at about 0°, defaults to FEEDER_DEFAULT_MOTOR_MIN_PULSEWIDTH
         W	pulsewidth at which servo is at about 180°, defaults to FEEDER_DEFAULT_MOTOR_MAX_PULSEWIDTH
         X	ignore feedback pin, defaults to FEEDER_DEFAULT_IGNORE_FEEDBACK
@@ -49,7 +51,6 @@ class Feeder:
         '''Convert a feeder to a dictionary'''
         feeder_dictionary = vars(self)
         print(feeder_dictionary)
-        return
 
     @classmethod
     def from_dictionary(cls, data):
@@ -57,23 +58,23 @@ class Feeder:
         feeder = cls()
         feeder.__dict__.update(data)
         return feeder
-        
+
     @staticmethod
     def _normalize_angle(angle):
         return angle % 360  # Normalize angle to be within 0-359 degrees.
-    
+
     @property
     def advance_angle(self):
         return self.advance_angle
-    
+
     @advance_angle.setter
     def advance_angle(self, angle):
         self.advance_angle = Feeder.normalize_angle(angle)
-        
+
     @property
     def half_advance_angle(self):
         return self.half_advance_angle
-    
+
     @half_advance_angle.setter
     def half_advance_angle(self, angle):
         self.half_advance_angle = Feeder._normalize_angle(angle)
@@ -81,7 +82,7 @@ class Feeder:
     @property
     def retract_angle(self):
         return self.retract_angle
-    
+
     @retract_angle.setter
     def retract_angle(self, angle):
         self.retract_angle = Feeder._normalize_angle(angle)
@@ -89,14 +90,16 @@ class Feeder:
     @property
     def settle_time(self):
         return self.settle_time
-    
+
     @settle_time.setter
     def settle_time(self, time):
-        self.settle_time = time     # TODO: Add error checking based on acceptable time values in feeder firmware
+        self.settle_time = time
+        # TODO: Add error checking based on acceptable time values in feeder firmware
 
 def open_serial_port(port_name):
-    global serial_port
     """Open the selected COM port with the state's comm_properties values."""
+
+    global serial_port
 
     try:
         serial_port = serial.Serial(port=port_name,
@@ -106,19 +109,25 @@ def open_serial_port(port_name):
                                             stopbits=serial.STOPBITS_ONE,
                                             timeout=1)
         print(f"COM port {port_name} opened successfully.")
+        return serial_port
     except serial.SerialException as e:
         print(f"Failed to open COM port {port_name}: {e}")
+        return
 
 def close_serial_port():
-    global serial_port
     """Close the open serial port."""
+
+    global serial_port
+
     if serial_port and serial_port.is_open:
         serial_port.close()
         print("Serial port closed.")
 
 def send_command(command, response_callback):
-    global serial_port
     """Send a command to the feeder and handle the response with a callback"""
+
+    global serial_port
+
     if not serial_port or not serial_port.is_open:
         print("Serial port not open.")
         return
@@ -147,8 +156,6 @@ def handle_error_response(response):
     else:
         print("Unexpected response.", response)
 
-
-
 # Ensure the serial port is closed when the program exits.
 atexit.register(close_serial_port)
 
@@ -167,7 +174,7 @@ def check_feeder():
 
 def enable_disable_feeders(enable=True):
     """Enable or disable all feeders."""
-    if not _feeder_enabled:
+    if not enable:
         send_command("M611 S1", handle_ok_response)
         _feeder_enabled = enable
     else:
@@ -244,7 +251,6 @@ def handle_command(key):
         print(f"Unknown command: {key}")
 
 
-
 def print_help():
     help_text = """
     Jog Controls:
@@ -316,10 +322,10 @@ def main_menu():
         elif choice == "4":
             jog_windows()
         elif choice == "6":
-            pass
+            print("Function not implemented")
             # save_feeders_to_file()
         elif choice == "7":
-            pass
+            print("Function not implemented")
             # load_feeders_from_file()
         elif choice == "8":
             break
