@@ -1,14 +1,16 @@
 import re
+import sys
 import serial
 import serial.tools.list_ports
 import atexit
 import time
-import json
-import tabulate
+import msvcrt
 
 # Naughty global variables
 _feeder_enabled = False
 _feeder_address = None
+_current_angle = 180    # Default starting and resting angle for servos.
+serial_port = None
 
 class Feeder:
     '''
@@ -44,14 +46,10 @@ class Feeder:
         self.current_angle = None   # This angle is not persistent
 
     def to_dictionary(self):
-        '''Convert a feeder to a dicctionary'''
+        '''Convert a feeder to a dictionary'''
         feeder_dictionary = vars(self)
         print(feeder_dictionary)
         return
-    
-    @staticmethod
-    def _normalize_angle(angle):
-        return angle % 360  # Normalize angle to be within 0-359 degrees.
 
     @classmethod
     def from_dictionary(cls, data):
@@ -59,6 +57,10 @@ class Feeder:
         feeder = cls()
         feeder.__dict__.update(data)
         return feeder
+        
+    @staticmethod
+    def _normalize_angle(angle):
+        return angle % 360  # Normalize angle to be within 0-359 degrees.
     
     @property
     def advance_angle(self):
@@ -92,84 +94,40 @@ class Feeder:
     def settle_time(self, time):
         self.settle_time = time     # TODO: Add error checking based on acceptable time values in feeder firmware
 
-
-
-    # def list_feeders(self):
-    #     '''List all loaded feeders using tabulate.'''
-    #     if not self.feeder_names:
-    #         print("No feeders have been loaded.")
-    #         return
-        
-    #     # Create a list of feeder property lists.
-
-    #     feeders_list = []
-    #     for name, feeder in self.feeder_names.items():
-    #         feeders_list.append([
-    #                             feeder.id,
-    #                             feeder.model,
-    #                             feeder.body_width,
-    #                             feeder.tape_width,
-    #                             feeder.min_pitch,
-    #                             feeder.advance_angle,
-    #                             feeder.half_advance_angle,
-    #                             feeder.retract_angle,
-    #                             feeder.default_feed_length,
-    #                             feeder.settle_time,
-    #                             feeder.control_min_pulsewidth,
-    #                             feeder.control_max_pulsewidth,
-    #                             feeder.feedback_pin_monitored
-    #         ])
-
-    #     # Define headers for the table
-    #     headers = [
-    #         "ID", "Model", "Body width", "Tape width", "Min pitch",
-    #         "Advance angle", "Half advance angle", "Retract angle",
-    #         "Default feed length", "Settle time", "Min pulsewidth",
-    #         "Max pulsewidth", "Feedback pin monitored?" 
-    #     ]
-
-    #     # Use tabluate to print the table
-    #     print(tabulate(feeders.list, headers = headers))
-
-def open_serial_port(self):
+def open_serial_port(port_name):
+    global serial_port
     """Open the selected COM port with the state's comm_properties values."""
-    if self.serial_port:
-        print("Serial port is already open.")
-        return
-
-    port = self.comm_properties["port"]
-
-    if port is None:
-        print("No COM port selected. Configure communications properties before attempting to open the port.")
-        return
 
     try:
-        self.serial_port = serial.Serial(port=port,
-                                            baudrate=self.comm_properties["baudrate"],
-                                            parity=self.comm_properties["parity"],
-                                            stopbits=self.comm_properties["stopbits"],
+        serial_port = serial.Serial(port=port_name,
+                                            baudrate=9600,
+                                            bytesize=8,
+                                            parity=serial.PARITY_NONE,
+                                            stopbits=serial.STOPBITS_ONE,
                                             timeout=1)
-        print(f"COM port {port} opened successfully.")
+        print(f"COM port {port_name} opened successfully.")
     except serial.SerialException as e:
-        print(f"Failed to open COM port {port}: {e}")
+        print(f"Failed to open COM port {port_name}: {e}")
 
-def close_serial_port(self):
+def close_serial_port():
+    global serial_port
     """Close the open serial port."""
-    if self.serial_port and self.serial_port.is_open:
-        self.serial_port.close()
+    if serial_port and serial_port.is_open:
+        serial_port.close()
         print("Serial port closed.")
 
-def send_command(self, command, response_callback):
+def send_command(command, response_callback):
+    global serial_port
     """Send a command to the feeder and handle the response with a callback"""
-    if not self.serial_port or not self.serial_port.is_open:
+    if not serial_port or not serial_port.is_open:
         print("Serial port not open.")
         return
 
     try:
-        self.serial_port.write(command.encode('utf-8'))
+        serial_port.write(command.encode('utf-8'))
         # Wait for the response
         time.sleep(0.5)
-        response = self.serial_port.readline().decode('utf-8').strip()
+        response = serial_port.readline().decode('utf-8').strip()
         if response:
             response_callback(response)
         else:
@@ -218,38 +176,135 @@ def enable_disable_feeders(enable=True):
     
 def select_feeder_address():
     """Select a feeder address."""
-    address = input("Enter feeder address (e.g., 100 for board 1, index 00): ")
+    global _feeder_address
+    address = input("Enter 3-digit feeder address (e.g., 003 for board 0, position 3): ")
     # Validate and set feeder address
-    if re.match(r"^[1-5][0-9]{2}$", address) and 0 <= int(address[1:]) <= 11:
+    if re.match(r"^[0-4](0[0-9]|1[0-2])$", address):
         _feeder_address = address
-        check_feeder()
+        print(f"Feeder address{_feeder_address} selected.")
+        # check_feeder()
     else:
-        print("Invalid address. Use a valid board (1-5) and index (0-12).")
+        print("Invalid address. Use a board number (0-4) and position (00-12).")
 
 
-def send_to_angle(current_angle):
-    """Command servo to go to a specific angle."""
-    angle = input(f"Enter angle (0-360, current: {current_angle}, +/- for relative): ")
-    # Normalize and set angle
+def jog_windows():
+    command_mode = True # Start command mode.
+
+    print("Jog Mode: Use keys to adjust angle ('e' to exit, 'h' for help).")
+    print("Enter numbers directly for absolute angles, prefix with '+' or '-' for relative movement.")
+
+    input_buffer = ""   # Buffer for numeric input
+
+    while True:
+        if msvcrt.kbhit():
+            key = msvcrt.getch().decode('utf-8')
+
+            if command_mode:
+                if key.lower() == 'e':  # Exit jog mode
+                    print("Exiting jog mode.")
+                elif key.lower() == 'h':  # Show help
+                    print_help()
+                elif key in '.,<>ofhrFHR':  # Single key commands
+                    handle_command(key)
+                elif key.isdigit() or key in '+-':  # Start of numeric input
+                        command_mode = False
+                        input_buffer += key
+                        print(f"Angle input: {input_buffer}, end='\r")
+                else:
+                    print("Unknown command. Press 'h' for help.")
+            else:   # Numeric input mode
+                if key == '\r':  # Enter key
+                    handle_numeric_input(input_buffer)
+                    input_buffer = ""   # Clear buffer
+                    command_mode = True # Switch back to command mode
+                elif key.isdigit() or (key in '+-' and not input_buffer):
+                    input_buffer += key
+                    print(f"Angle input: {input_buffer}", end='\r')
+                elif key == '\x08':  # Handle backspace
+                    input_buffer = input_buffer[:-1]
+                    print(f"Angle input: {input_buffer}", end='\r')
+                else:
+                    print("\nInvalid input. Returning to command mode.")
+                    input_buffer = ""
+                    command_mode = True
+
+def handle_command(key):
+    if key in ['.', ',', '>', '<', 'o', 'F', 'H', 'R', 'f', 'h', 'r']:
+        if key == '.':
+            adjust_angle("+1")
+        elif key == ',':
+            adjust_angle("-1")
+        elif key == '>':
+            adjust_angle("+5")
+        elif key == '<':
+            adjust_angle("-5")
+    elif key.isdigit() or key in ['+', '-']:
+        print("Switching to numeric input mode for angle adjustment.")
+    else:
+        print(f"Unknown command: {key}")
+
+
+
+def print_help():
+    help_text = """
+    Jog Controls:
+    . - jog cw 1 degree
+    , - jog ccw 1 degree
+    > - jog cw 5 degrees
+    < - jog ccw 5 degrees
+    o - return to origin (180°)
+    F - set current position as full advance
+    H - set current position as half advance
+    R - set current position as retract angle
+    f, h, r - jog to currently set full, half, retract angles
+    e - exit jog mode
+    Enter numbers directly for absolute angles, prefix with '+' or '-' for relative movement.
+    """
+    print(help_text)
+
+
+def handle_numeric_input(input_str):
+    global _current_angle
+    print(f"Setting angle to {input_str} (placeholder action)")
+
+
+    
+def adjust_angle(input_str):
+    '''Adjust the servo angle based on the provided input string.'''
+    global _current_angle
+
+    if _current_angle is None: # Initialize
+        _current_angle = 180
+
     try:
-        if angle.startswith("+") or angle.startswith("-"):
-            commanded_angle = current_angle + int(angle) % 360
-        
+        if input_str.startswith(("+", "-")):
+            relative_adjustment = int(input_str)
+            _current_angle = (_current_angle + relative_adjustment) % 360
         else:
-            commanded_angle = int(angle) % 360
-        
-        send_command(f"M603N{_feeder_address}A{commanded_angle}", handle_ok_response)
-        print(f"Servo angle set to {current_angle} degrees.")
+            _current_angle = int(input_str) % 360
+
+        send_command(f"M603N{_feeder_address}A{_current_angle}", handle_ok_response)
+        print(f"Servo angle set to {_current_angle} degrees.")
+
     except ValueError:
-        print("Invalid angle. Enter a valid angle.")
+        print("Invalid angle. enter a valid angle (0-360, or +/- for relative adjustment).")
 
 def main_menu():
+
+    if len(sys.argv) > 1:
+        port_name = sys.argv[1]
+    else:
+        print("Specify the communications port as the first argument.")
+        sys.exit(1)
+   
+    serial_port = open_serial_port(port_name)
+
     while True:
         current_feeder_id = _feeder_address if _feeder_address else "None"
         print(f"\nMain Menu - Current feeder ID: {current_feeder_id}")
         print("1. Choose feeder by ID")
         print("2. Enable/disable all feeders?")
-        print("4. Drive servo to a specific angle")
+        print("4. Jog feeder servo arm")
         print("6. Save feeders to file")
         print("7. Load feeders from file")
         print("8. Exit")
@@ -259,7 +314,7 @@ def main_menu():
         elif choice == "2":
             pass
         elif choice == "4":
-            send_to_angle()
+            jog_windows()
         elif choice == "6":
             pass
             # save_feeders_to_file()
@@ -275,4 +330,3 @@ def main_menu():
 if __name__ == "__main__":
 
     main_menu()
-    # open_serial_port("COM5")
