@@ -97,28 +97,35 @@ class Feeder:
         # TODO: Add error checking based on acceptable time values in feeder firmware
 
 def open_serial_port(port_name):
-    """Open the selected COM port with the state's comm_properties values."""
-
+    """Open the provided COM port."""
     global serial_port
 
-    try:
-        serial_port = serial.Serial(port=port_name,
-                                            baudrate=9600,
-                                            bytesize=8,
-                                            parity=serial.PARITY_NONE,
-                                            stopbits=serial.STOPBITS_ONE,
-                                            timeout=1)
-        print(f"COM port {port_name} opened successfully.")
-        return serial_port
-    except serial.SerialException as e:
-        print(f"Failed to open COM port {port_name}: {e}")
-        return
+    if port_name:
+
+        try:
+            serial_port = serial.Serial(port=port_name,
+                                                baudrate=19200
+                                                ,
+                                                bytesize=8,
+                                                parity=serial.PARITY_NONE,
+                                                stopbits=serial.STOPBITS_ONE,
+                                                timeout=1)
+            print(f"COM port {port_name} opened successfully.")
+            return serial_port
+        except serial.SerialException as e:
+            print(f"Failed to open COM port {port_name}: {e}")
+            return
+        
+    else:
+        serial_port = None
+        print("Simulating serial port.")
 
 def close_serial_port():
     """Close the open serial port."""
 
     global serial_port
 
+    # Only close if serial_port is defined, which it isn't if simulating.
     if serial_port and serial_port.is_open:
         serial_port.close()
         print("Serial port closed.")
@@ -128,7 +135,10 @@ def send_command(command, response_callback):
 
     global serial_port
 
-    if not serial_port or not serial_port.is_open:
+    if not serial_port:
+        print("No serial port defined. Simulating.")
+        return
+    elif serial_port.is_open:
         print("Serial port not open.")
         return
 
@@ -159,27 +169,27 @@ def handle_error_response(response):
 # Ensure the serial port is closed when the program exits.
 atexit.register(close_serial_port)
 
-def check_feeder():
-    """Check if the selected feeder is OK."""
-    if _feeder_address is None:
-        print("No feeder address selected.")
-        return
-    command = f"M602 N{_feeder_address}"
-    send_command("M602", handle_ok_response)
-    response = "Feeder reports OK"
-    if re.match(r"^ok.*", response):
-        print("Feeder is OK.")
-    else:
-        print("Feeder reports an error.")
+# def check_feeder():
+#     """Check if the selected feeder is OK."""
+#     if _feeder_address is None:
+#         print("No feeder address selected.")
+#         return
+#     command = f"M602 N{_feeder_address}"
+#     send_command("M602", handle_ok_response)
+#     response = "Feeder reports OK"
+#     if re.match(r"^ok.*", response):
+#         print("Feeder is OK.")
+#     else:
+#         print("Feeder reports an error.")
 
-def enable_disable_feeders(enable=True):
-    """Enable or disable all feeders."""
-    if not enable:
-        send_command("M611 S1", handle_ok_response)
-        _feeder_enabled = enable
-    else:
-        send_command("M611 S0", handle_ok_response)
-    print("Feeders enabled." if enable else "Feeders disabled.")
+# def enable_disable_feeders(enable=True):
+#     """Enable or disable all feeders."""
+#     if not enable:
+#         send_command("M611 S1", handle_ok_response)
+#         _feeder_enabled = enable
+#     else:
+#         send_command("M611 S0", handle_ok_response)
+#     print("Feeders enabled." if enable else "Feeders disabled.")
     
 def select_feeder_address():
     """Select a feeder address."""
@@ -216,7 +226,7 @@ def jog_windows():
                 elif key.isdigit() or key in '+-':  # Start of numeric input
                         command_mode = False
                         input_buffer += key
-                        print(f"Angle input: {input_buffer}, end='\r")
+                        print(f"Angle input: {input_buffer}", end='\r')
                 else:
                     print("Unknown command. Press 'h' for help.")
             else:   # Numeric input mode
@@ -299,11 +309,18 @@ def main_menu():
 
     if len(sys.argv) > 1:
         port_name = sys.argv[1]
+    # else:
+    #     print("Specify the communications port as the first argument.")
+    #     sys.exit(1)
     else:
-        print("Specify the communications port as the first argument.")
-        sys.exit(1)
-   
-    serial_port = open_serial_port(port_name)
+        port_name = None
+
+    if port_name:
+        serial_port = open_serial_port(port_name)
+    else:
+        # No serial port was specified. Simulate serial port.
+        serial_port = None
+        print("No serial port specified on command line. Simulating serial port.")
 
     while True:
         current_feeder_id = _feeder_address if _feeder_address else "None"
