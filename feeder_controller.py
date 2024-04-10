@@ -4,9 +4,11 @@ import time
 
 
 class BoardPosition:
-    def __init__(self, advance_angle=None, half_advance_angle=None,
+    def __init__(self, board_id, position_id, advance_angle=None, half_advance_angle=None,
                  retract_angle=None, default_feed_length=None, settle_time=None,
                  enabled=False):
+        self.board_id = board_id
+        self.position_id = position_id
         self._current_angle = None  # Transient value, not persisted
         self.advance_angle = advance_angle
         self.half_advance_angle = half_advance_angle
