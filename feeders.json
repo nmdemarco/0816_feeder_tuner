@@ -1,0 +1,75 @@
+[
+    {
+    "id": "Feeder1",
+    "model": "BambooFeeder AS1",
+    "body_width": 12,
+    "tape_width": 8,
+    "min_pitch": 2,
+    "advance_angle": 180,
+    "half_advance_angle": 90,
+    "retract_angle": 0,
+    "default_feed_length": 4,
+    "settle_time": 0.5
+    },
+    {
+    "id": "Feeder2",
+    "model": "BambooFeeder AS1",
+    "body_width": 12,
+    "tape_width": 8,
+    "min_pitch": 2,
+    "advance_angle": 180,
+    "half_advance_angle": 90,
+    "retract_angle": 0,
+    "default_feed_length": 4,
+    "settle_time": 0.5
+    },
+    {
+    "id": "Feeder3",
+    "model": "BambooFeeder AS1",
+    "body_width": 12,
+    "tape_width": 8,
+    "min_pitch": 2,
+    "advance_angle": 180,
+    "half_advance_angle": 90,
+    "retract_angle": 0,
+    "default_feed_length": 4,
+    "settle_time": 0.5
+    },
+    {
+    "id": "Feeder4",
+    "model": "BambooFeeder AS1",
+    "body_width": 12,
+    "tape_width": 8,
+    "min_pitch": 2,
+    "advance_angle": 180,
+    "half_advance_angle": 90,
+    "retract_angle": 0,
+    "default_feed_length": 4,
+    "settle_time": 0.5
+    },
+    {
+    "id": "Feeder5",
+    "model": "BambooFeeder AS1",
+    "body_width": 12,
+    "tape_width": 8,
+    "min_pitch": 2,
+    "advance_angle": 180,
+    "half_advance_angle": 90,
+    "retract_angle": 0,
+    "default_feed_length": 4,
+    "settle_time": 0.5
+    },
+    {
+    "id": "Feeder6",
+    "model": "BambooFeeder AS1",
+    "body_width": 12,
+    "tape_width": 8,
+    "min_pitch": 2,
+    "advance_angle": 180,
+    "half_advance_angle": 90,
+    "retract_angle": 0,
+    "default_feed_length": 4,
+    "settle_time": 0.5
+    }
+]
+  

@@ -1,0 +1,7 @@
+"feederControllers": [
+    {
+      "port_name": "COM3",
+      "feeders_assigned": ["Feeder1", "Feeder2"]
+    }
+    // Additional controllers...
+  ]
