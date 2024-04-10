@@ -1,8 +1,13 @@
+import logging
 import sys
 import msvcrt
 from feeder_controller import FeederController
 from feeder import Feeder
 import json
+
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
 def print_help():
@@ -24,29 +29,6 @@ def print_help():
     # Display help text.
     print(immediate_command_help)
 
-
-def adjust_angle(feeder, new_angle):
-    '''Adjust the feeder's servo angle based on the provided input string.'''
-
-    if _current_angle is None: # Initialize
-        _current_angle = 180
-
-    try:
-        # Is this a relative move?
-        if new_angle.startswith(("+", "-")):
-            relative_adjustment = int(new_angle)
-            new_angle = (_current_angle + relative_adjustment) % 360
-        else:
-            # Nope. This is an absolute move.
-            new_angle = int(new_angle) % 360
-
-        send_command(f"M603N{_feeder_address}A{new_angle}", handle_ok_response)
-        # TODO: actually re-get the current angle and report it vs. assuming the send_command was successful.
-        _current_angle = new_angle  # TODO: When you assume... 
-        print(f"Servo angle set to {_current_angle} degrees.")
-
-    except ValueError:
-        print("Invalid angle. enter a valid angle (0-360, or +/- for relative adjustment).")
 
 def command_mode():
     """
@@ -72,7 +54,7 @@ def command_mode():
     while True:
         if msvcrt.kbhit():
             key = msvcrt.getch().decode('utf-8')
-            print(f"Key pressed is: {key}")
+            logging.debug(f"Key pressed is: {key}")
 
             if key.lower() in exit_keys:  # Exit jog mode
                 mode = None
@@ -110,7 +92,6 @@ def command_mode():
                     mode = "immediate"
 
 
-
 def handle_immediate_keys(key):
     """Converts immediate keys into angle adjustment values."""
     print(f"Handling immediate key ({key})")
@@ -140,32 +121,7 @@ def handle_immediate_keys(key):
 
 
 def handle_numeric_input(input_str):
-    global _current_angle
     print(f"Setting angle to {input_str} (placeholder action)")
-
-
-
-def set_feeder_parameter(key):
-    global _current_angle, feeders, _feeder_address
-
-    if key == 'F':
-        advance_angle = _current_angle
-        print(f"Set full advance angle to {_current_angle}")
-    elif key == 'H':
-        half_advance_angle = _current_angle
-        print(f"Set half advance angle to {_current_angle}")
-    elif key == 'R':
-        retract_angle = _current_angle
-        print(f"Set retract angle to {_current_angle}")
-    elif key == 'f':
-        adjust_angle(advance_angle)
-        print(f"Moved to full advance angle {_current_angle}")
-    elif key == 'h':
-        adjust_angle(half_advance_angle)
-        print(f"Moved to half advance angle {_current_angle}")
-    elif key == 'r':
-        adjust_angle(retract_angle)
-        print(f"Moved to retract angle {_current_angle}")
 
 
 def select_feeder(feederList):
@@ -179,12 +135,15 @@ def load_feeders_from_json(filename="feeders.json"):
         feeders = [Feeder.from_dictionary(f_data) for f_data in feeders_data]
         return feeders
     except FileNotFoundError:
-        print(f"File {filename} not found.")
+        logging.info(f"File {filename} not found.")
         return []
     except json.JSONDecodeError as e:
-        print(f"Error decoding JSON from {filename}: {e}")
+        logging.error(f"Error decoding JSON from {filename}: {e}")
         return []
 
+def list_feeders(feeders):
+    for feeder in feeders:
+        logging.info(f"Loaded feeder: {feeder.to_dictionary()}")
 
 
 def main_menu():
@@ -199,26 +158,31 @@ def main_menu():
 
     if port_name:
         feeder_controller = FeederController(port_name)
+        logging.info(f"Connected to feeder on {feeder_controller.serial_port.port}.")
     else:
         # No serial port was specified. Simulate serial port.
         serial_port = None
         print("No serial port specified on command line. Simulating serial port.")
 
     feeders = load_feeders_from_json()
-    for feeder in feeders:
-        print(f"Loaded feeder: {feeder.to_dictionary()}")
+
 
     while True:
         print(f"\nMain Menu - Current feeder ID: TODO: FEEDER ID GOES HERE")
         print("1. Choose feeder by ID")
         print("2. Enable/disable all feeders?")
+        print("3. List feeders")
         print("4. Jog feeder servo arm")
         print("8. Exit")
         choice = input("Enter your choice: ")
+        print("\n")
+
         if choice == "1":
             feeder1 = Feeder(id="Feeder1", address="000")
         elif choice == "2":
             feeder_controller
+        elif choice == "3":
+            list_feeders(feeders)
         elif choice == "4":
             command_mode()
         elif choice == "8":
