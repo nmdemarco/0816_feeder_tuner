@@ -1,7 +1,7 @@
-"feederControllers": [
-    {
-      "port_name": "COM3",
-      "feeders_assigned": ["Feeder1", "Feeder2"]
-    }
-    // Additional controllers...
-  ]
+[
+  {
+    "port_name": "COM5",
+    "num_boards": 5,
+    "model": "PandaPlacerSlotFeederv2"
+  }
+]

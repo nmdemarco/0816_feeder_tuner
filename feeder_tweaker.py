@@ -123,11 +123,6 @@ def handle_immediate_keys(key):
 def handle_numeric_input(input_str):
     print(f"Setting angle to {input_str} (placeholder action)")
 
-
-def select_feeder(feederList):
-    """Select a feeder from the list of available feeders"""
-    return 1
-
 def load_feeders_from_json(filename="feeders.json"):
     try:
         with open(filename, 'r') as file:
@@ -141,57 +136,110 @@ def load_feeders_from_json(filename="feeders.json"):
         logging.error(f"Error decoding JSON from {filename}: {e}")
         return []
 
-def list_feeders(feeders):
+def list_feeders(feeders, exclude_columns=None):
+    if exclude_columns is None:
+        exclude_columns = ["_current_angle", "_enabled"]
+
+    # Define all possible columns
+    all_columns = ["id", "model", "body_width", "tape_width", "min_pitch", "_advance_angle", "_half_advance_angle", "_retract_angle", "_default_feed_length", "_settle_time", "_current_angle", "_enabled"]
+
+    # Filter out excluded columns
+    columns = [col for col in all_columns if col not in exclude_columns]
+
+    # Determine the maximum width for each column
+    column_widths = {col: len(col) for col in columns}
+
     for feeder in feeders:
-        logging.info(f"Loaded feeder: {feeder.to_dictionary()}")
+        feeder_info = feeder.to_dictionary()
+        for col in columns:
+            column_widths[col] = max(column_widths[col], len(str(feeder_info.get(col, ''))))
+
+    # Create the header row
+    header_row = "Idx " + " | ".join(f"{col:{column_widths[col]}}" for col in columns)
+    print(header_row)
+    print("-" * len(header_row))  # Separator line
+
+    # Print each feeder's details in a row
+    for index, feeder in enumerate(feeders, start=1):
+        feeder_info = feeder.to_dictionary()
+        row = f"{index:<3} " + " | ".join(f"{str(feeder_info.get(col, '')):{column_widths[col]}}" for col in columns)
+        print(row)
+
+
+
+def select_feeder(feederList):
+    """Select a feeder from the list of available feeders. Return the FeederID"""
+    list_feeders(feederList)
+
+    try:
+        selection = int(input("Enter the number of the feeder to select: ")) -1
+        if 0 <= selection < len(feederList):
+            select_feeder = feederList[selection]
+            feeder_id = select_feeder.id
+            logging.info(f"Feeder ID {feeder_id} selected.")
+            return feeder_id
+        else:
+            print("Invalid selection. Please enter a number from the list.")
+            return None
+        
+    except ValueError:
+        logging.error("Invalid input. Enter a numeric value.")
+        return None
+
+
+def load_feeder_controllers_config(file_path='feeder_controllers.json'):
+    "Load feeder controller configurations from a JSON file."
+    try:
+        with open(file_path, 'r') as file:
+            feeder_controllers = json.load(file)
+            return feeder_controllers
+    except FileNotFoundError:
+        logging.warn(f"Configuration file {file_path} not found.")
+        return []
+    except json.JSONDecodeError:
+        logging.warning(f"Error decoding JSON from {file_path}")
+        return []
 
 
 def main_menu():
 
-    if len(sys.argv) > 1:
-        port_name = sys.argv[1]
-    # else:
-    #     print("Specify the communications port as the first argument.")
-    #     sys.exit(1)
-    else:
-        port_name = None
-
-    if port_name:
+    feeder_controllers_config = load_feeder_controllers_config()
+    if feeder_controllers_config:
+        # TODO: Should we really initialize the first controller found? Good for most situations, but not all.
+        first_controller_config = feeder_controllers_config[0]
+        port_name = first_controller_config['port_name']
         feeder_controller = FeederController(port_name)
         logging.info(f"Connected to feeder on {feeder_controller.serial_port.port}.")
     else:
-        # No serial port was specified. Simulate serial port.
-        serial_port = None
-        print("No serial port specified on command line. Simulating serial port.")
+        logging.warning("No feeder controller configuration found. Exiting.")
 
     feeders = load_feeders_from_json()
+    feeder_id = None
 
 
     while True:
-        print(f"\nMain Menu - Current feeder ID: TODO: FEEDER ID GOES HERE")
+        append_feeder_info = f" - Current feeder: {feeder_id}" if feeder_id else ""
+        print(f"\nMain Menu{append_feeder_info}")
         print("1. Choose feeder by ID")
         print("2. Enable/disable all feeders?")
         print("3. List feeders")
-        print("4. Jog feeder servo arm")
-        print("8. Exit")
+        print("5. Jog feeder servo arm")
+        print("0. Exit")
         choice = input("Enter your choice: ")
         print("\n")
 
         if choice == "1":
-            feeder1 = Feeder(id="Feeder1", address="000")
+            feeder_id = select_feeder(feeders)
         elif choice == "2":
             feeder_controller
         elif choice == "3":
             list_feeders(feeders)
-        elif choice == "4":
+        elif choice == "5":
             command_mode()
-        elif choice == "8":
+        elif choice == "0":
             break
         else:
             print("Invalid choice. Please enter a number between 1 and 8.")
-
-
-
 
 
 if __name__ == "__main__":

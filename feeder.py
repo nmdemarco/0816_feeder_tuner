@@ -50,17 +50,13 @@ class Feeder:
 
     def to_dictionary(self):
         '''Convert a feeder to a dictionary'''
-        feeder_dictionary = vars(self)
-        print(feeder_dictionary)
+        return  vars(self)
 
     @classmethod
     def from_dictionary(cls, data):
         '''Create a feeder instance from a dictionary'''
         return cls(id=data['id'], **{k: v for k, v in data.items() if k != 'id'})
 
-    @staticmethod
-    def _normalize_angle(angle):
-        return angle % 360  # Normalize angle to be within 0-359 degrees.
 
     @property
     def advance_angle(self):
@@ -103,27 +99,36 @@ class Feeder:
     def default_feed_length(self, length):
         self._default_feed_length = length
 
+    @staticmethod
+    def _normalize_angle(angle):
+        return int(angle % 360)  # Normalize angle to be within 0-359 degrees.
     
+    def adjust_angle(self, _new_angle):
+        '''Adjust the feeder's servo angle based on the provided input string.'''
+
+        if self._current_angle is None: # Initialize
+            self._current_angle = 180
+
+        try:
+            # Is this a relative move?
+            if _new_angle.startswith(("+", "-")):
+                _relative_adjustment = int(_new_angle)
+                _new_angle = Feeder._normalize_angle(self._current_angle + _relative_adjustment)
+            else:
+                # Nope. This is an absolute move.
+                _new_angle = Feeder._normalize_angle(_new_angle)
+            
+            return _new_angle
+
+        except ValueError:
+            print("Invalid angle. enter a valid angle (0-360, or +/- for relative adjustment).")
 
 
-# def check_feeder():
-#     """Check if the selected feeder is OK."""
-#     if _feeder_address is None:
-#         print("No feeder address selected.")
-#         return
-#     command = f"M602 N{_feeder_address}"
-#     send_command("M602", handle_ok_response)
-#     response = "Feeder reports OK"
-#     if re.match(r"^ok.*", response):
-#         print("Feeder is OK.")
-#     else:
-#         print("Feeder reports an error.")
-
-# def enable_disable_feeders(enable=True):
-#     """Enable or disable all feeders."""
-#     if not enable:
-#         send_command("M611 S1", handle_ok_response)
-#         _feeder_enabled = enable
-#     else:
-#         send_command("M611 S0", handle_ok_response)
-#     print("Feeders enabled." if enable else "Feeders disabled.")
+def enable_feeder(state=True):
+    """Enable or disable all feeders."""
+    if not enable:
+        send_command("M611 S1", handle_ok_response)
+        _feeder_enabled = enable
+    else:
+        send_command("M611 S0", handle_ok_response)
+    print("Feeders enabled." if enable else "Feeders disabled.")
