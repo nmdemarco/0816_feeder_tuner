@@ -1,0 +1,678 @@
+{
+  "feeder_controller": {
+    "model": "PandaPlacerSlotFeeder_v3",
+    "port_name": "COM5",
+    "boards": {
+      "0": {
+        "positions": {
+          "0": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "1": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "2": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "3": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "4": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "5": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "6": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "7": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "8": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "9": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "10": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "11": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "12": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          }
+        }
+      },
+      "1": {
+        "positions": {
+          "0": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "1": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "2": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "3": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "4": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "5": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "6": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "7": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "8": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "9": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "10": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "11": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "12": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          }
+        }
+      },
+      "2": {
+        "positions": {
+          "0": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "1": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "2": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "3": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "4": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "5": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "6": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "7": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "8": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "9": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "10": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "11": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "12": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          }
+        }
+      },
+      "3": {
+        "positions": {
+          "0": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "1": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "2": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "3": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "4": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "5": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "6": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "7": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "8": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "9": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "10": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "11": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "12": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          }
+        }
+      },
+      "4": {
+        "positions": {
+          "0": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "1": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "2": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "3": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "4": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "5": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "6": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "7": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "8": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "9": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "10": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "11": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          },
+          "12": {
+            "feeder_id": "None",
+            "advance_angle": 180,
+            "half_advance_angle": 125,
+            "retract_angle": 56,
+            "default_feed_length": 4,
+            "settle_time": 480,
+            "min_pulsewidth": 500,
+            "max_pulsewidth": 2500
+          }
+        }
+      }
+    }
+  }
+}

@@ -80,35 +80,35 @@ def parse_m621_output(data):
 
 # Example usage
 data = """
-M621
+  M621
 
-BoardAddr:0
+  BoardAddr:0
 
-M620 N0 A180 B125 C56 F4 U480 V500 W2500 X1
+  M620 N0 A180 B125 C56 F4 U480 V500 W2500 X1
 
-M620 N1 A180 B125 C56 F4 U480 V500 W2500 X1
+  M620 N1 A180 B125 C56 F4 U480 V500 W2500 X1
 
-... (other board data)
+  ... (other board data)
 
-M620 N12 A180 B125 C56 F4 U480 V25 W2500 X1
+  M620 N12 A180 B125 C56 F4 U480 V25 W2500 X1
 
-M620 N12 A180 B125 C56 F4 U480 V500 W2500 X1  # Invalid data (duplicate position)
+  M620 N12 A180 B125 C56 F4 U480 V500 W2500 X1  # Invalid data (duplicate position)
 
-ok [BoardAddr:0]
+  ok [BoardAddr:0]
 
-BoardAddr:2
+  BoardAddr:2
 
-... (other board data)
+  ... (other board data)
 
-ok [BoardAddr:2]
+  ok [BoardAddr:2]
 
-... (data for other boards)
+  ... (data for other boards)
 
-BoardAddr:4
+  BoardAddr:4
 
-M620 N412 A180 B125 C56 F4 U480 V500 W2500 X1
+  M620 N412 A180 B125 C56 F4 U480 V500 W2500 X1
 
-ok [BoardAddr:4]
+  ok [BoardAddr:4]
 """
 
 parsed_boards = parse_m621_output(data)
