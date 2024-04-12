@@ -223,8 +223,9 @@ def main_menu(feeder_controller):
 
 
 if __name__ == "__main__":
-    feeder_controller = feeder_controller.import_feeder_controller_config()
-    if feeder_controller:
+    try:
+        feeder_controller = feeder_controller.FeederController("feeder_controller.json")
+        feeder_controller.initialize_feeder_positions()
         main_menu(feeder_controller)
-    else:
-        logging.warning("No feeder controller configuration found. Exiting.")
+    except (FileNotFoundError, json.JSONDecodeError) as e:
+            logging.exception(f"Exception: {e}")

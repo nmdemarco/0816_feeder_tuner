@@ -3,6 +3,7 @@ import serial
 import atexit
 import json
 import logging
+import sys
 
 class BoardPosition:
     """A position (slot) on a feeder board where a feeder can be connected."""
@@ -50,8 +51,18 @@ class FeederBoard:
     As far as I know, boards cannot be selectively enabled, disabled.
     They are physically addressed."""
 
-    def __init__(self, num_positions=13) -> None:
-        self.positions = [BoardPosition() for _ in range(num_positions)]
+    def __init__(self, board_config):
+        self.positions = {}
+        for position_id, position_data in board_config["positions"].items():
+            self.positions[int(position_id)] = BoardPosition(
+                feeder_id=position_data.get("feeder_id", None),
+                advance_angle=position_data.get("advance_angle", 120),
+                half_advance_angle=position_data.get("half_advance_angle", 60),
+                retract_angle=position_data.get("retract_angle", 45),
+                default_feed_length=position_data.get("default_feed_length", 4),
+                settle_time=position_data.get("settle_time", 200)
+            )
+
 
 
 class FeederController:
@@ -64,32 +75,60 @@ class FeederController:
     M575 Bx where x is (4800,9600,19200,38400,57600,115200) - changes the baud rate
     
     """
+    def __init__(self, config_file="feeder_controller.json"):
+        """Load feeder config info from a JSON file."""
+        try:
+            with open(config_file, 'r') as file:
+                self.config = json.load(file)
+                logging.info("Extaccting 'feeder_controller' key.")
+                self.controller_config = self.config["feeder_controller"]
+                if not self.controller_config:
+                    raise KeyError(f"No 'feeder_controller' key found in the {config_file} file.")
 
-    _instance = None # Class atribute to hold the singleton instance.
-    _feeders = []
+                self.model = self.controller_config["model"] 
+                self.port_name = self.controller_config["port_name"]
+                self.boards = [FeederBoard(board_config) for board_config in self.controller_config["boards"].values()]
+                self.serial_port = None
+                self._enabled = False
+                self.command_callbacks = {}
+                self.open_serial_port(self.port_name)
+                atexit.register(self.close_serial_port)
 
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super(FeederController, cls).__new__(cls)
-            cls._instance.__initialized = False
-        return cls._instance
+        except FileNotFoundError:
+            logging.exception(f"Configuration file {config_file} not found.")
+            sys.exit(1)
+        except json.JSONDecodeError as e:
+            logging.error(f"Error decoding JSON from file {config_file}: {e}")
+            sys.exit(1)
+        except KeyError as e:
+            logging.error(f"Missing key: {e}")
+            sys.exit(1)
+        except Exception as e:
+            logging.error(f"An unexpected error occurred. {e}")
+            sys.exit(1)
 
-    def __init__(self, port_name, num_boards=1, model="PandaPlacerSlotFeederv2") -> None:
-        if hasattr(self, '__initialized') and self.__initialized: return
-        self.__initialized = True
+    def initialize_feeder_positions(self):
+        """Initializes feeder positions based on the JSON configuration file."""
 
-        self.port_name = port_name
-        self.model = model
-        self.boards = [FeederBoard() for _ in range(num_boards)]
-        self.open_serial_port(port_name)
-        self._enabled = False
+        total_positions_initialized = 0
 
-        self.command_callbacks = {}
-        register_command_callback(self, "M115", self.handle_m115_response)
+ 
+        print(f"Boards contains {len(self.config["feeder_controller"]["boards"].items())} items.")
+        for board_id, board_data in self.config["feeder_controller"]["boards"].items():
+            board_positions = board_data.get("positions", {})
+            for position_id, position_data in board_positions.items():
+                position = BoardPosition(
+                    advance_angle=position_data.get("advance_angle", 120),
+                    half_advance_angle=position_data.get("half_advance_angle", 60),
+                    retract_angle=position_data.get("retract_angle", 45),
+                    default_feed_length=position_data.get("default_feed_length", 4),
+                    settle_time=position_data.get("settle_time", 200)
+                )
+                self.boards[int(board_id)].positions[int(position_id)] = position
+                total_positions_initialized += 1
 
-        # Register a serial port cleanup routine at exit.
-        atexit.register(self.close_serial_port)
-        
+        logging.info(f"{total_positions_initialized} positions initialized successfully.")
+
     def open_serial_port(self, port_name):
         try:
             self.serial_port = serial.Serial(port=port_name,
@@ -100,7 +139,6 @@ class FeederController:
                                         timeout=1)
 
             logging.info(f"Serial port {port_name} opened successfully.")
-            # Request firmware info on successful connection
             self.request_firmware_info()
         except serial.SerialException as e:
             print(f"Failed to open serial port {port_name}: {e}")
@@ -127,34 +165,7 @@ class FeederController:
                 # Read all data until timeout or newline character
                 response = self.serial_port.readline().decode('utf-8').strip()
                 logging.info(f"Response RRReceived: {response}")
-                
-                try:
-                    print("Is command_callbacks attribute present:", hasattr(self, 'command_callbacks'))
-                    if hasattr(self, 'command_callbacks'):
-                        print("command_callbacks content:", self.command_callbacks)
-                    else:
-                        print("Initializing command_callbacks")
-                        self.command_callbacks = {}
 
-                except Exception as e:
-                    logging.error(f"Exception encountered checking the command_callbacks: {e}")
-                
-                
-                try:
-                
-                    print("here, about to try printing self.command_callbacks, but we're going to somehow skip over lots of code")
-                    print(self.command_callbacks)
-                    print("Still here.")
-                    print(f"Response for checking: {response}")
-
-    # # Direct call for debug
-    #                 if command == "M115":
-    #                     self.handle_m115_response(response)
-    #                     return
-
-                except Exception as e:
-                    logging.error(f"Exception encountered: {e}")
-                
                 if response:
                     # Call the registered callback, if available. Otherwise, handle as generic.
                     if command in self.command_callbacks:
@@ -261,3 +272,4 @@ def register_command_callback(controller, command, callback):
     if not callable(callback):
         raise ValueError("Callback must be a callable function.")
     controller.command_callbacks[command] = callback
+
