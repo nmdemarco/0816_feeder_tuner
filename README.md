@@ -17,3 +17,12 @@ To use this tool:
 
 Running feeders
 Once all feeders have been tuned, you can move feeders to different slots, and the tuning parmeters will be updated accoordingly.
+
+##Protocol for PandaPlacer BambooFeeder Controller
+
+Taken from https://docs.mgrl.de/maschine:pickandplace:feeder:0816feeder:mcodes
+
+Additonal M codes:
+M621 ; return configuration for all boards and positions.
+M621 Bx ; return configuration for position x (e.g board 1, position 5 is 105)
+
